@@ -9,6 +9,7 @@ class SplashController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    print("init user");
 
     Timer(Duration(seconds:3), () {
       navigateUser();
@@ -19,6 +20,7 @@ class SplashController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    print("Onready user");
 
     Timer(Duration(seconds:3), () {
       navigateUser();
@@ -31,6 +33,7 @@ class SplashController extends GetxController {
   }
 
   navigateUser() {
+    print("Navigate user");
     Get.offAllNamed(Routes.LOGIN);
   }
 
