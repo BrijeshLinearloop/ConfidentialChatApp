@@ -9,5 +9,6 @@ class ColorConstant{
   static Color colorBalck = Colors.black;
   static Color colorGrey = Colors.grey;
   static Color colorPrimary = Color(0xFFFDB11A);
+  static Color colorBlackTransparent = Color(0x50000000);
 
 }
