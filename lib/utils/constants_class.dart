@@ -7,9 +7,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'network/network_info.dart';
+
 class ConstantsClass{
 
-  static var fontFamily = GoogleFonts.lato();
+  static var fontFamily = GoogleFonts.roboto().fontFamily;
 
   static toastMessage(var message){
     Fluttertoast.showToast(
@@ -61,5 +63,13 @@ class ConstantsClass{
         ),
       ),
     );
+  }
+
+  static Future<bool> isNetworkConnected() async {
+    if (!await Get.find<NetworkInfo>().isConnected()) {
+      return false;
+    }else{
+      return true;
+    }
   }
 }

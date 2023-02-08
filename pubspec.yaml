@@ -18,6 +18,7 @@ dependencies:
   bouncing_widget: ^2.0.0
   get: 4.6.5
   fluttertoast: ^8.1.2
+  connectivity_plus: ^3.0.2
 
   flutter: 
     sdk: flutter
