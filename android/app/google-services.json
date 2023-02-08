@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "401174770454",
+    "project_id": "confidential-chat-app",
+    "storage_bucket": "confidential-chat-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:401174770454:android:d27f9e034583cfa81f1637",
+        "android_client_info": {
+          "package_name": "com.confidentialchatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "401174770454-r8pnj5soem3m6on0o7rbnf56ajie7gfc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.confidentialchatapp",
+            "certificate_hash": "394368696d5109319a79b2387eea902b53500876"
+          }
+        },
+        {
+          "client_id": "401174770454-4f0io8p3hhcja1bed8j5epp688ca7tgd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCM06dMcEA_jcugkAxKNzWA3801kbRQDLA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "401174770454-4f0io8p3hhcja1bed8j5epp688ca7tgd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
