@@ -1,4 +1,5 @@
 import 'package:confidential_chat_app/utils/color_constant.dart';
+import 'package:confidential_chat_app/utils/image_paths.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -18,7 +19,8 @@ class SplashView extends GetWidget<SplashController> {
               child:
               Align(
                   alignment: Alignment.center,
-                    child: Image.asset("",height: 30,width: 100,),
+                    child: Image(image: AssetImage(ImagePaths.splashLogo),),
+                    // child: Image.asset(ImagePaths.splashLogo,height: 30,width: 100,),
 
           ),
         )));

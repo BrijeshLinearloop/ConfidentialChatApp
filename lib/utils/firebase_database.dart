@@ -1,7 +1,7 @@
 class FirebaseDatabase{
 
   // table user field
-  static var tbluser='tbl_user fields';
+  static var tbluser='tbl_user field';
   static var userId= 'id';
   static var userUsername='username';
   static var userEmail='email';
@@ -10,6 +10,7 @@ class FirebaseDatabase{
   static var userFcmToken='fcm_token';
   static var userPassword='password';
   static var userCreatedDate='created_date';
+  static var userPhoneNumber='phonenumber';
   static var userUpdateDate='update_date';
 
 
