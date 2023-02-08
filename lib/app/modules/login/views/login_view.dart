@@ -4,6 +4,7 @@ import 'package:confidential_chat_app/utils/constants_class.dart';
 import 'package:confidential_chat_app/utils/image_paths.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../../utils/math_utils.dart';
@@ -37,12 +38,11 @@ class LoginView extends GetWidget<LoginController> {
                       const SizedBox(height: 50,),
 
                       SizedBox(
-                        height: 50.0,
-                        width: 50.0,
-                        child: Image.asset(ImagePaths.iconGoogle),
+                        height: 100.0,
+                        width: 100.0,
+                        child:SvgPicture.asset(ImagePaths.linearlooplogo),
                       ),
 
-                      const SizedBox(height: 50,),
 
                       Text(
                         "Sign in",
@@ -182,7 +182,9 @@ class LoginView extends GetWidget<LoginController> {
       children: [
         BouncingWidget(
             onPressed: () {
-              controller.googleLoginOnPress();
+              // controller.googleLoginOnPress();
+              // controller.addUser();
+              controller.emailLogin();
               print("google login pressed");
             },
             child: Container(
