@@ -83,8 +83,7 @@ class LoginView extends GetWidget<LoginController> {
                               CustomTextField(
                                   textInputAction: TextInputAction.done,
                                   label: "Password",
-                                  controller: controller
-                                      .passwordController,
+                                  controller: controller.passwordController,
                                   hint: "Enter Password",
                                   validator: (value) {
                                     if (value == null || (!isValidPassword(value, isRequired: true))) {
@@ -94,16 +93,17 @@ class LoginView extends GetWidget<LoginController> {
                                   },
                                   suffixIcon: Padding(
                                     padding: EdgeInsets.only(
-                                        left: getHorizontalSize(14.00),
-                                        right: getHorizontalSize(14.00)),
+                                      left: getHorizontalSize(10.00),
+                                      right: getHorizontalSize(10.00)
+                                    ),
                                     child: Container(
-                                        height: getSize(16.00),
-                                        width: getSize(16),
+                                        height: getSize(25),
+                                        width: getSize(25),
                                         child: InkWell(
                                           child: Icon(
                                             controller.showPassword.value ? Icons.visibility_off : Icons.visibility,
                                             color: Colors.grey,
-                                            size: 20,
+                                            size: getSize(20),
                                           ),
                                           onTap: () {
                                             controller.showPassword.value = !controller.showPassword.value;
