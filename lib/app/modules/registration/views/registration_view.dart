@@ -1,18 +1,19 @@
 import 'package:bouncing_widget/bouncing_widget.dart';
-import 'package:confidential_chat_app/utils/color_constant.dart';
-import 'package:confidential_chat_app/utils/image_paths.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
+
 import 'package:get/get.dart';
 
+import '../../../../utils/color_constant.dart';
+import '../../../../utils/image_paths.dart';
 import '../../../../utils/math_utils.dart';
 import '../../../../utils/validation_functions.dart';
 import '../../../../widgets/custom_text_field.dart';
-import '../controllers/login_controller.dart';
+import '../controllers/registration_controller.dart';
 
-class LoginView extends GetWidget<LoginController> {
-  LoginView({Key? key}) : super(key: key);
+class RegistrationView extends GetWidget<RegistrationController> {
+  RegistrationView({Key? key}) : super(key: key);
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -44,7 +45,7 @@ class LoginView extends GetWidget<LoginController> {
 
 
                       Text(
-                        "Sign in",
+                        "Sign Up",
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.left,
                         style: TextStyle(
@@ -60,6 +61,26 @@ class LoginView extends GetWidget<LoginController> {
                           padding: EdgeInsets.only(left: getHorizontalSize(32.00), right: getHorizontalSize(32.00)),
                           child: CustomTextField(
                             isReadOnly:false,
+                            keyboardType: TextInputType.text,
+                            textInputFiler: [FilteringTextInputFormatter.deny(RegExp('[ ]')),],
+                            textInputAction: TextInputAction.next,
+                            label: "Username",
+                            controller: controller.usernameController,
+                            obscureText: false,
+                            hint: "Enter username",
+                            validator: (value) {
+                              if (value == null || value == "") {
+                                return "Please enter username";
+                              }
+                              return null;
+                            },
+                          )
+                      ),
+
+                      Padding(
+                          padding: EdgeInsets.only(left: getHorizontalSize(32.00),top: getVerticalSize(18.00), right: getHorizontalSize(32.00)),
+                          child: CustomTextField(
+                            isReadOnly: controller.isEmailReadOnly.value,
                             keyboardType: TextInputType.emailAddress,
                             textInputFiler: [FilteringTextInputFormatter.deny(RegExp('[ ]')),],
                             textInputAction: TextInputAction.next,
@@ -75,6 +96,27 @@ class LoginView extends GetWidget<LoginController> {
                             },
                           )
                       ),
+
+                      Padding(
+                          padding: EdgeInsets.only(left: getHorizontalSize(32.00), top: getVerticalSize(18.00), right: getHorizontalSize(32.00)),
+                          child: CustomTextField(
+                            isReadOnly:false,
+                            keyboardType: TextInputType.number,
+                            textInputFiler: [FilteringTextInputFormatter.deny(RegExp('[ ]')),],
+                            textInputAction: TextInputAction.next,
+                            label: "Phone number",
+                            controller: controller.phoneNoController,
+                            obscureText: false,
+                            hint: "Enter phone number",
+                            validator: (value) {
+                              if (value == null || value == "") {
+                                return "Please enter phone number";
+                              }
+                              return null;
+                            },
+                          )
+                      ),
+
 
                       Padding(
                           padding: EdgeInsets.only(left: getHorizontalSize(32.00), top: getVerticalSize(18.00), right: getHorizontalSize(32.00)),
@@ -94,8 +136,8 @@ class LoginView extends GetWidget<LoginController> {
                                   },
                                   suffixIcon: Padding(
                                     padding: EdgeInsets.only(
-                                      left: getHorizontalSize(10.00),
-                                      right: getHorizontalSize(10.00)
+                                        left: getHorizontalSize(10.00),
+                                        right: getHorizontalSize(10.00)
                                     ),
                                     child: Container(
                                         height: getSize(25),
@@ -117,51 +159,55 @@ class LoginView extends GetWidget<LoginController> {
                           )
                       ),
 
+                      Padding(
+                          padding: EdgeInsets.only(left: getHorizontalSize(32.00), top: getVerticalSize(18.00), right: getHorizontalSize(32.00)),
+
+                          child: Obx(() =>
+                              CustomTextField(
+                                  isReadOnly:false,
+                                  textInputAction: TextInputAction.done,
+                                  label: "Confirm password",
+                                  controller: controller.confirmPasswordController,
+                                  hint: "Enter Password",
+                                  validator: (value) {
+                                    if (value == null || (!isValidPassword(value, isRequired: true))) {
+                                      return "Please enter valid confirm password";
+                                    }
+                                    return null;
+                                  },
+                                  suffixIcon: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: getHorizontalSize(10.00),
+                                        right: getHorizontalSize(10.00)
+                                    ),
+                                    child: Container(
+                                        height: getSize(25),
+                                        width: getSize(25),
+                                        child: InkWell(
+                                          child: Icon(
+                                            controller.showConfirmPassword.value ? Icons.visibility_off : Icons.visibility,
+                                            color: Colors.grey,
+                                            size: getSize(20),
+                                          ),
+                                          onTap: () {
+                                            controller.showConfirmPassword.value = !controller.showConfirmPassword.value;
+                                          },
+                                        )
+                                    ),
+                                  ),
+                                  obscureText: controller.showConfirmPassword.value
+                              )
+                          )
+                      ),
+
                       SizedBox(height: 20,),
 
                       Padding(
                         padding: EdgeInsets.only(left: getHorizontalSize(32.00),right: getHorizontalSize(32.00)),
-                        child: signInButton(),
+                        child: signUpButton(),
                       ),
 
                       SizedBox(height: 20,),
-
-                      Container(
-                        width: Get.width-getHorizontalSize(64),
-                        child: Row(
-                          children: [
-
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                color: ColorConstant.colorGrey,
-                              ),
-                            ),
-
-                            Container(
-                                margin: EdgeInsets.only(right: 10,left: 10),
-                                child: Text("OR",
-                                  style:TextStyle(
-                                    color: ColorConstant.colorBalck,
-                                    fontSize: getFontSize(18),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )
-                            ),
-
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                color: ColorConstant.colorGrey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(height: 20,),
-
-                      googleLoginButton(),
 
                     ],
                   ),
@@ -177,67 +223,14 @@ class LoginView extends GetWidget<LoginController> {
     );
   }
 
-  Widget googleLoginButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        BouncingWidget(
-            onPressed: () {
-              controller.googleLoginOnPress();
-              print("google login pressed");
-            },
-            child: Container(
-              width: Get.width-getHorizontalSize(64),
-              padding: const EdgeInsets.only(right: 15, left: 15, top: 10, bottom: 10),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: ColorConstant.colorWhite,
-                borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-                boxShadow: [
-                  BoxShadow(
-                    color: ColorConstant.colorGrey,
-                    spreadRadius: getHorizontalSize(0.50),
-                    blurRadius: getHorizontalSize(0.50),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 30.0,
-                    width: 30.0,
-                    child: Image.asset(ImagePaths.iconGoogle),
-                  ),
-
-                  const SizedBox(width: 20,),
-
-                  Text(
-                    "Sign In with Google",
-                    style: TextStyle(
-                      color: ColorConstant.colorBalck,
-                      fontSize: getFontSize(16),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
-
-
-                ],
-              ),
-            )
-        )
-      ],
-    );
-  }
-
-  Widget signInButton() {
+  Widget signUpButton() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         BouncingWidget(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                controller.userSignIn();
+                controller.signUp();
               }
             },
             child: Container(
@@ -260,7 +253,7 @@ class LoginView extends GetWidget<LoginController> {
                 children: [
 
                   Text(
-                    "Sign In",
+                    "Sign Up",
                     style: TextStyle(
                       color: ColorConstant.colorWhite,
                       fontSize: getFontSize(18),

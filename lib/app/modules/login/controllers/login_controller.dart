@@ -2,14 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:confidential_chat_app/utils/constants_class.dart';
 
 import 'package:confidential_chat_app/utils/firebase_database.dart';
+import 'package:confidential_chat_app/utils/preferences_manage.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../routes/app_pages.dart';
+
 class LoginController extends GetxController {
 
+  CollectionReference users = FirebaseFirestore.instance.collection(FirebaseDatabase.tbluser);
   TextEditingController emailIdController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   var showPassword = true.obs;
@@ -19,10 +23,10 @@ class LoginController extends GetxController {
 
   var isApiCall = false.obs;
 
-  void signIn() async {
-
+  void userSignIn() async {
     if (await ConstantsClass.isNetworkConnected()) {
       // check sign in details...
+      ConstantsClass.toastMessage("Coming soon");
     } else {
       ConstantsClass.toastMessage("No internet connection try again later...");
     }
@@ -64,7 +68,15 @@ class LoginController extends GetxController {
 
         isApiCall.value = false;
 
-        ConstantsClass.toastMessage("Login successfully.");
+        Get.toNamed(Routes.REGISTRATION,arguments:{
+          "user_email":"$userEmail",
+          "user_display_name":"$userDisplayName",
+          "user_photo_url":"$userPhotoUrl",
+          "user_id":"$userID",
+          "user_phone":"$userPhone",
+        } );
+
+        //ConstantsClass.toastMessage("Login successfully.");
 
       }else{
         isApiCall.value = false;
@@ -79,40 +91,37 @@ class LoginController extends GetxController {
 
   }
 
+  Future<void> emailLogin()async{
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: "beeerry.allen@example.com",
+          password: "SuperSecretPassword!"
+      );
+      print("add user");
+      addUser();
+      print("user added");
 
-  CollectionReference users = FirebaseFirestore.instance.collection(FirebaseDatabase.tbluser);
-
-
-Future<void> emailLogin()async{
-  try {
-    UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: "beeerry.allen@example.com",
-        password: "SuperSecretPassword!"
-    );
-    print("add user");
-    addUser();
-    print("user added");
-
-  } on FirebaseAuthException catch (e) {
-    if (e.code == 'weak-password') {
-      print('The password provided is too weak.');
-    } else if (e.code == 'email-already-in-use') {
-      print('The account already exists for that email.');
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+    } catch (e) {
+      print(e);
     }
-  } catch (e) {
-    print(e);
   }
-}
 
-
-  Future<void> addUser() {
+  Future<void> addUser() async {
     print("Sucess");
+
+    var fcmToken = await PreferencesManage.getPreferencesValue(PreferencesManage.fcmToken);
+
     // Call the user's CollectionReference to add a new user
-    return users
-        .add({
+    return users.add({
       FirebaseDatabase.userId: "john",
       FirebaseDatabase.userEmail: "Useremail",
-      FirebaseDatabase.userFcmToken: "fcm",
+      FirebaseDatabase.userFcmToken: fcmToken,
       FirebaseDatabase.userGoogleLoginToken: "token",
       FirebaseDatabase.userPassword: "pass",
       FirebaseDatabase.userUpdateDate: "update",
@@ -130,6 +139,9 @@ Future<void> emailLogin()async{
 
   @override
   void onInit() {
+
+    ConstantsClass.fcmTokenRefresh();
+
     super.onInit();
   }
 

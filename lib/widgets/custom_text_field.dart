@@ -15,6 +15,7 @@ class CustomTextField extends StatelessWidget {
   bool obscureText = false;
   TextInputType? keyboardType = TextInputType.text;
   bool? isEnabled = false;
+  bool isReadOnly = false;
   BoxConstraints? suffixIconConstraints;
   bool? showCapital = false;
   TextCapitalization textCapitalization = TextCapitalization.sentences;
@@ -32,6 +33,7 @@ class CustomTextField extends StatelessWidget {
       this.keyboardType,
       required this.obscureText,
       this.isEnabled,
+      required this.isReadOnly,
       this.showCapital,
       this.textInputFiler,
       this.suffixIconConstraints});
@@ -86,6 +88,7 @@ class CustomTextField extends StatelessWidget {
                 ),
               ),
               child: TextFormField(
+                readOnly: isReadOnly,
                 enabled: isEnabled,
                 controller: controller,
                 maxLines: obscureText ? 1 : maxLines,
