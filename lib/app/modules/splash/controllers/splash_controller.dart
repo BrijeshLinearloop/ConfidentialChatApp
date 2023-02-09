@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:confidential_chat_app/utils/preferences_manage.dart';
 import 'package:get/get.dart';
 
+import '../../../../utils/constants_class.dart';
 import '../../../routes/app_pages.dart';
 
 class SplashController extends GetxController {
@@ -35,15 +37,22 @@ class SplashController extends GetxController {
 
   navigateUser() async {
 
-    var isLoginUser = await PreferencesManage.getPreferencesValue(PreferencesManage.isUserLogin);
-    print("isLoginUser => ${isLoginUser.toString()}");
+    if (await ConstantsClass.isNetworkConnected()) {
 
-    if(isLoginUser != null && isLoginUser.toString() == "1"){
-      Get.offAllNamed(Routes.DASHBOARD);
+      var isLoginUser = await PreferencesManage.getPreferencesValue(PreferencesManage.isUserLogin);
+      print("isLoginUser => ${isLoginUser.toString()}");
+
+      if(isLoginUser != null && isLoginUser.toString() == "1"){
+        Get.offAllNamed(Routes.DASHBOARD);
+      }else{
+        Get.offAllNamed(Routes.LOGIN);
+      }
+
     }else{
-      Get.offAllNamed(Routes.LOGIN);
-    }
 
+      // dialog..
+
+    }
   }
 
 

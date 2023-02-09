@@ -125,7 +125,7 @@ class RegistrationView extends GetWidget<RegistrationController> {
                           child: Obx(() =>
                               CustomTextField(
                                   isReadOnly:false,
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.next,
                                   label: "Password",
                                   controller: controller.passwordController,
                                   hint: "Enter Password",

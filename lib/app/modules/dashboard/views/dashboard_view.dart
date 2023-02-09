@@ -12,52 +12,65 @@ class DashboardView extends GetWidget<DashboardController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     body: Column(children: [
+      body: Stack(
+        children: [
+          Column(
+            children: [
 
-       HomePageHeader(),
-       SizedBox(height: 20,),
-       Row(
-         children: [
-           Padding(
-             padding: const EdgeInsets.only(left: 15.0),
-             child: Text("Recent",
-               overflow: TextOverflow.fade,
-               textAlign: TextAlign.left,
-               style: TextStyle(
-                 color: ColorConstant.colorBalck,
-                 fontSize: getFontSize(18),
-                 fontWeight: FontWeight.bold,
-               ),
-             ),
-           ),
-         ],
-       ),
+              HomePageHeader(controller),
 
-       ListView.builder(
-         itemCount: 4,
-         shrinkWrap: true,
-         padding: EdgeInsets.only(top: 16),
-         physics: NeverScrollableScrollPhysics(),
-         itemBuilder: (context, index){
-           return ConversationList(
-             name: "John",
-             messageText: "Good morning",
-             imageUrl: "",
-             time: "today",
-             isMessageRead: true,
-           );
-         },
-       ),
-     ],),
+              SizedBox(height: 20,),
+
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: Text("Recent",
+                      overflow: TextOverflow.fade,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: ColorConstant.colorBalck,
+                        fontSize: getFontSize(18),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              ListView.builder(
+                itemCount: 4,
+                shrinkWrap: true,
+                padding: EdgeInsets.only(top: 16),
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index){
+                  return ConversationList(
+                    name: "John",
+                    messageText: "Good morning",
+                    imageUrl: "",
+                    time: "today",
+                    isMessageRead: true,
+                  );
+                },
+              ),
+            ],
+          ),
+
+          Obx(() {
+            return controller.isApiCall.value ? ConstantsClass.apiLoadingWidget() : SizedBox();
+          })
+
+        ],
+      ),
     );
   }
 }
 
 
 
-Widget HomePageHeader(){
+Widget HomePageHeader(DashboardController controller){
   return Container(
-    height: 220,
+    //height: 220,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30),
         bottomRight: Radius.circular(30),
@@ -70,9 +83,9 @@ Widget HomePageHeader(){
         AppBar(
           leading: Icon(Icons.line_weight),
           centerTitle: true,
-          title: Text("MESSAGES",
+          title: Text(
+            "MESSAGES",
             overflow: TextOverflow.fade,
-
             textAlign: TextAlign.left,
             style: TextStyle(
               letterSpacing: 1.5,
@@ -94,74 +107,96 @@ Widget HomePageHeader(){
           ],
         ),
         SizedBox(height: 10,),
-        Padding(
-          padding: const EdgeInsets.only(right: 10.0,bottom: 5),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text("view more",
-                overflow: TextOverflow.fade,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  color: ColorConstant.colorWhite,
-                  fontSize: getFontSize(14),
-                  // fontWeight: FontWeight.bold,
-                ),
-              )
-            ],
-          ),
 
-        ),
-
-        Padding(
-          padding: const EdgeInsets.only(bottom: 22.0, right: 10, left: 10, ),
-          child: Container(
-            height:70,
-            width: double.infinity,
-            child: ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemCount:6,
-              itemBuilder: (BuildContext ctx, int index){
-                return Row(
-
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(height: 50,width: 50,decoration: BoxDecoration(
-                            color: ColorConstant.colorWhite,
-                            borderRadius: BorderRadius.all(Radius.circular(15))
-                        ),),
-                        Text("john ",
-                          overflow: TextOverflow.fade,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            color: ColorConstant.colorWhite,
-                            fontSize: getFontSize(14),
-                            // fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(width: 10,)
-                  ],
-                );
-              },
-
+        Obx(() {
+          return controller.listAllUsers != null && controller.listAllUsers.length > 5
+              ?
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0,bottom: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text("view more",
+                  overflow: TextOverflow.fade,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: ColorConstant.colorWhite,
+                    fontSize: getFontSize(14),
+                    // fontWeight: FontWeight.bold,
+                  ),
+                )
+              ],
             ),
-          ),
-        )
+          )
+              :
+          SizedBox();
+        }),
+
+        Obx(() {
+          return controller.listAllUsers != null && controller.listAllUsers.length > 0
+              ?
+          Padding(
+            padding: const EdgeInsets.only(bottom: 18.0, right: 10, left: 10, ),
+            child: Container(
+              height: 90,
+              width: double.infinity,
+              child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.listAllUsers.length,
+                itemBuilder: (BuildContext ctx, int index){
+                  return Row(
+
+                    children: [
+
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 55,
+                            width: 55,
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 2,color: ColorConstant.colorWhite),
+                              borderRadius: const BorderRadius.all(Radius.circular(30.0)),
+                            ),
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(controller.listAllUsers[index].userProfileImage),
+                              radius: 10,
+                            ),
+                          ),
+                          Text(
+                            controller.listAllUsers[index].username.toString().replaceAll(" ", "\n").toTitleCase(),
+                            overflow: TextOverflow.fade,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: ColorConstant.colorWhite,
+                              fontSize: getFontSize(14),
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(width: 15,)
+                    ],
+                  );
+                },
+
+              ),
+            ),
+          )
+              :
+          const SizedBox();
+        })
+
+
       ],
     ),
   );
 }
-
-
-
-
-
-
+extension StringCasingExtension on String {
+  String toCapitalized() => length > 0 ?'${this[0].toUpperCase()}${substring(1).toLowerCase()}':'';
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ').split(' ').map((str) => str.toCapitalized()).join(' ');
+}
 
 class ConversationList extends StatefulWidget{
   String name;
