@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:confidential_chat_app/utils/preferences_manage.dart';
 import 'package:get/get.dart';
 
 import '../../../routes/app_pages.dart';
@@ -32,9 +33,17 @@ class SplashController extends GetxController {
     super.onClose();
   }
 
-  navigateUser() {
-    print("Navigate user");
-    Get.offAllNamed(Routes.LOGIN);
+  navigateUser() async {
+
+    var isLoginUser = await PreferencesManage.getPreferencesValue(PreferencesManage.isUserLogin);
+    print("isLoginUser => ${isLoginUser.toString()}");
+
+    if(isLoginUser != null && isLoginUser.toString() == "1"){
+      Get.offAllNamed(Routes.DASHBOARD);
+    }else{
+      Get.offAllNamed(Routes.LOGIN);
+    }
+
   }
 
 
