@@ -1,4 +1,3 @@
-
 import 'package:confidential_chat_app/utils/color_constant.dart';
 import 'package:confidential_chat_app/utils/math_utils.dart';
 import 'package:confidential_chat_app/utils/preferences_manage.dart';
@@ -9,6 +8,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+
 
 class ConstantsClass{
 
@@ -65,6 +66,7 @@ class ConstantsClass{
       ),
     );
   }
+
 
   static Future<bool> isNetworkConnected() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
