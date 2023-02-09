@@ -4,6 +4,7 @@ class LoginUserListController extends GetxController {
   //TODO: Implement LoginUserListController
 
   final count = 0.obs;
+  RxBool search =true.obs;
   @override
   void onInit() {
     super.onInit();

@@ -1,10 +1,9 @@
+import 'package:confidential_chat_app/app/routes/app_pages.dart';
 import 'package:confidential_chat_app/utils/color_constant.dart';
 import 'package:confidential_chat_app/utils/constants_class.dart';
 import 'package:confidential_chat_app/utils/math_utils.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-
 import '../controllers/dashboard_controller.dart';
 
 class DashboardView extends GetWidget<DashboardController> {
@@ -13,7 +12,6 @@ class DashboardView extends GetWidget<DashboardController> {
   Widget build(BuildContext context) {
     return Scaffold(
      body: Column(children: [
-
        HomePageHeader(),
        SizedBox(height: 20,),
        Row(
@@ -68,7 +66,7 @@ Widget HomePageHeader(){
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         AppBar(
-          leading: Icon(Icons.line_weight),
+          // leading: Icon(Icons.line_weight),
           centerTitle: true,
           title: Text("MESSAGES",
             overflow: TextOverflow.fade,
@@ -99,13 +97,18 @@ Widget HomePageHeader(){
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text("view more",
-                overflow: TextOverflow.fade,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  color: ColorConstant.colorWhite,
-                  fontSize: getFontSize(14),
-                  // fontWeight: FontWeight.bold,
+              
+              GestureDetector(
+                onTap:(){
+                  Get.toNamed(Routes.LOGIN_USER_LIST);                },
+                child: Text("View more",
+                  overflow: TextOverflow.fade,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: ColorConstant.colorWhite,
+                    fontSize: getFontSize(16),
+                    // fontWeight: FontWeight.bold,
+                  ),
                 ),
               )
             ],
