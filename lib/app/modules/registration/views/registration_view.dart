@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../../../utils/color_constant.dart';
+import '../../../../utils/constants_class.dart';
 import '../../../../utils/image_paths.dart';
 import '../../../../utils/math_utils.dart';
 import '../../../../utils/validation_functions.dart';
@@ -213,9 +214,11 @@ class RegistrationView extends GetWidget<RegistrationController> {
                   ),
                 ),
               ),
-            )
+            ),
 
-            //controller.isApiCall.value ? ConstantsClass.apiLoadingWidget() : SizedBox()
+            Obx(() {
+              return controller.isApiCall.value ? ConstantsClass.apiLoadingWidget() : SizedBox();
+            })
 
           ],
         ),

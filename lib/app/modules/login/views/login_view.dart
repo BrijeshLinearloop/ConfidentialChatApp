@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
+import '../../../../utils/constants_class.dart';
 import '../../../../utils/math_utils.dart';
 import '../../../../utils/validation_functions.dart';
 import '../../../../widgets/custom_text_field.dart';
@@ -167,9 +168,11 @@ class LoginView extends GetWidget<LoginController> {
                   ),
                 ),
               ),
-            )
+            ),
 
-            //controller.isApiCall.value ? ConstantsClass.apiLoadingWidget() : SizedBox()
+            Obx(() {
+              return controller.isApiCall.value ? ConstantsClass.apiLoadingWidget() : SizedBox();
+            })
 
           ],
         ),

@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:confidential_chat_app/utils/constants_class.dart';
 
@@ -13,7 +14,7 @@ import '../../../routes/app_pages.dart';
 
 class LoginController extends GetxController {
 
-  CollectionReference users = FirebaseFirestore.instance.collection(FirebaseDatabase.tbluser);
+  CollectionReference users = FirebaseFirestore.instance.collection(FirebaseDatabase.tblUser);
   TextEditingController emailIdController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   var showPassword = true.obs;
@@ -26,7 +27,10 @@ class LoginController extends GetxController {
   void userSignIn() async {
     if (await ConstantsClass.isNetworkConnected()) {
       // check sign in details...
-      ConstantsClass.toastMessage("Coming soon");
+
+      isApiCall.value = true;
+      isAuthUserExist(emailIdController.text.trim(), passwordController.text.trim());
+
     } else {
       ConstantsClass.toastMessage("No internet connection try again later...");
     }
@@ -54,10 +58,10 @@ class LoginController extends GetxController {
 
       if(userDetails != null){
 
-        var userEmail = userDetails.email;
-        var userDisplayName = userDetails.displayName;
-        var userPhotoUrl = userDetails.photoURL;
-        var userID = userDetails.uid;
+        var userEmail = userDetails.email ?? "";
+        var userDisplayName = userDetails.displayName ?? "";
+        var userPhotoUrl = userDetails.photoURL ?? "";
+        var userID = userDetails.uid ?? "";
         var userPhone = userDetails.phoneNumber ?? "";
 
         print("googleLogin userEmail => $userEmail");
@@ -66,17 +70,7 @@ class LoginController extends GetxController {
         print("googleLogin userID => $userID");
         print("googleLogin userPhone => $userPhone");
 
-        isApiCall.value = false;
-
-        Get.toNamed(Routes.REGISTRATION,arguments:{
-          "user_email":"$userEmail",
-          "user_display_name":"$userDisplayName",
-          "user_photo_url":"$userPhotoUrl",
-          "user_id":"$userID",
-          "user_phone":"$userPhone",
-        } );
-
-        //ConstantsClass.toastMessage("Login successfully.");
+        isGoogleUserExist(userEmail,userDisplayName,userPhotoUrl,userID,userPhone);
 
       }else{
         isApiCall.value = false;
@@ -91,50 +85,149 @@ class LoginController extends GetxController {
 
   }
 
-  Future<void> emailLogin()async{
+  // Future<void> emailLogin()async{
+  //   try {
+  //     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+  //         email: "beeerry.allen@example.com",
+  //         password: "SuperSecretPassword!"
+  //     );
+  //     print("add user");
+  //     addUser();
+  //     print("user added");
+  //
+  //   } on FirebaseAuthException catch (e) {
+  //     if (e.code == 'weak-password') {
+  //       print('The password provided is too weak.');
+  //     } else if (e.code == 'email-already-in-use') {
+  //       print('The account already exists for that email.');
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
+
+  Future<void> isAuthUserExist(var email, var password) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: "beeerry.allen@example.com",
-          password: "SuperSecretPassword!"
-      );
-      print("add user");
-      addUser();
-      print("user added");
+      await users.where(FirebaseDatabase.userEmail, isEqualTo: email)
+          .where(FirebaseDatabase.userPassword, isEqualTo: password)
+          .get()
+          .then((value) {
+            //value.size > 0 ? true : false
 
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-      }
+            if(value.size > 0){
+              // user Exist...
+
+              var userDocsId = value.docs.first.id;
+              var userEmail = value.docs.first[FirebaseDatabase.userEmail];
+              var username = value.docs.first[FirebaseDatabase.userUsername];
+              var userGoogleLoginToken = value.docs.first[FirebaseDatabase.userGoogleLoginToken];
+              var userProfileImage = value.docs.first[FirebaseDatabase.userProfileImage];
+              var userPhoneNumber = value.docs.first[FirebaseDatabase.userPhoneNumber];
+
+              print("loginDetails username => $username");
+              print("loginDetails userEmail => $userEmail");
+              print("loginDetails userGoogleLoginToken => $userGoogleLoginToken");
+              print("loginDetails userProfileImage => $userProfileImage");
+              print("loginDetails userPhoneNumber => $userPhoneNumber");
+              print("loginDetails userDocsId => $userDocsId");
+
+              ConstantsClass.toastMessage("User login successfully");
+
+              goToDashboardScreen(userDocsId,userEmail, username, userGoogleLoginToken, userProfileImage, userPhoneNumber);
+
+            }else{
+              // user Not Exist...
+              isApiCall.value = false;
+              ConstantsClass.toastMessage("User not exist.");
+            }
+
+          },);
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
+      isApiCall.value = false;
+      ConstantsClass.toastMessage("User not exist.");
     }
+
   }
 
-  Future<void> addUser() async {
-    print("Sucess");
+  Future<void> isGoogleUserExist(var userEmail, var userDisplayName, var userPhotoUrl, var userID, var userPhone) async {
+    try {
+      await users.where(FirebaseDatabase.userEmail, isEqualTo: userEmail)
+          .get()
+          .then((value) {
 
-    var fcmToken = await PreferencesManage.getPreferencesValue(PreferencesManage.fcmToken);
+            //value.size > 0 ? true : false
 
-    // Call the user's CollectionReference to add a new user
-    return users.add({
-      FirebaseDatabase.userId: "john",
-      FirebaseDatabase.userEmail: "Useremail",
-      FirebaseDatabase.userFcmToken: fcmToken,
-      FirebaseDatabase.userGoogleLoginToken: "token",
-      FirebaseDatabase.userPassword: "pass",
-      FirebaseDatabase.userUpdateDate: "update",
-      FirebaseDatabase.userProfileImage: "profile",
-      FirebaseDatabase.userUsername: "username",
-      FirebaseDatabase.userPhoneNumber: "phone",
-      FirebaseDatabase.userCreatedDate: "create",
+            if(value.size > 0){
+              // user Exist...
 
-    })
-        .then((value) => print("User Added"))
-        .catchError((error) => print("Failed to add user: $error"));
+              var userDocsId = value.docs.first.id;
+              var userEmail = value.docs.first[FirebaseDatabase.userEmail];
+              var username = value.docs.first[FirebaseDatabase.userUsername];
+              var userGoogleLoginToken = value.docs.first[FirebaseDatabase.userGoogleLoginToken];
+              var userProfileImage = value.docs.first[FirebaseDatabase.userProfileImage];
+              var userPhoneNumber = value.docs.first[FirebaseDatabase.userPhoneNumber];
+
+              print("loginDetails username => $username");
+              print("loginDetails userEmail => $userEmail");
+              print("loginDetails userGoogleLoginToken => $userGoogleLoginToken");
+              print("loginDetails userProfileImage => $userProfileImage");
+              print("loginDetails userPhoneNumber => $userPhoneNumber");
+              print("loginDetails userDocsId => $userDocsId");
+
+              ConstantsClass.toastMessage("User login successfully");
+
+              goToDashboardScreen(userDocsId,userEmail, username, userGoogleLoginToken, userProfileImage, userPhoneNumber);
+
+            }else{
+              // user Not Exist...
+              isApiCall.value = false;
+              goToSignUpScreen(userEmail, userDisplayName, userPhotoUrl, userID, userPhone);
+
+            }
+
+          },
+      );
+    } catch (e) {
+      debugPrint(e.toString());
+      isApiCall.value = false;
+      goToSignUpScreen(userEmail, userDisplayName, userPhotoUrl, userID, userPhone);
+    }
+
   }
 
+  Future<void> goToDashboardScreen(var userDocsId, var userEmail, var username, var userGoogleLoginToken,
+      var userProfileImage, var userPhoneNumber)async {
+
+    // store login details in Preferences.
+    PreferencesManage.setPreferencesValue(PreferencesManage.isUserLogin, "1");
+    PreferencesManage.setPreferencesValue(PreferencesManage.loginUserDocumentId, userDocsId);
+    PreferencesManage.setPreferencesValue(PreferencesManage.loginUserEmail, userEmail);
+    PreferencesManage.setPreferencesValue(PreferencesManage.loginUserName, username);
+    PreferencesManage.setPreferencesValue(PreferencesManage.loginUserGoogleLoginToken, userGoogleLoginToken);
+    PreferencesManage.setPreferencesValue(PreferencesManage.loginUserProfileImage, userProfileImage);
+    PreferencesManage.setPreferencesValue(PreferencesManage.loginUserPhoneNumber, userPhoneNumber);
+
+    isApiCall.value = false;
+
+    // go to dashboard screen.
+    Get.offAllNamed(Routes.DASHBOARD);
+
+  }
+
+  Future<void> goToSignUpScreen(var userEmail, var userDisplayName, var userPhotoUrl,
+      var userID, var userPhone)async {
+
+    Get.toNamed(Routes.REGISTRATION,arguments:{
+      "user_email":"$userEmail",
+      "user_display_name":"$userDisplayName",
+      "user_photo_url":"$userPhotoUrl",
+      "user_id":"$userID",
+      "user_phone":"$userPhone",
+    } );
+
+
+  }
 
 
   @override

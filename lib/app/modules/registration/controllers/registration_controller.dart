@@ -1,11 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../utils/constants_class.dart';
+import '../../../../utils/firebase_database.dart';
+import '../../../../utils/preferences_manage.dart';
 
 class RegistrationController extends GetxController {
+
+  CollectionReference users = FirebaseFirestore.instance.collection(FirebaseDatabase.tblUser);
 
   TextEditingController usernameController = TextEditingController();
   TextEditingController phoneNoController = TextEditingController();
@@ -32,7 +38,12 @@ class RegistrationController extends GetxController {
     }else{
       if (await ConstantsClass.isNetworkConnected()) {
         // check sign up details...
-        ConstantsClass.toastMessage("Coming soon");
+
+        isApiCall.value = true;
+
+        addUser(emailIdController.text,userGoogleLoginId.value,passwordController.text,userGooglePhotoUrl.value,
+        usernameController.text,phoneNoController.text);
+
       } else {
         ConstantsClass.toastMessage("No internet connection try again later...");
       }
@@ -40,51 +51,37 @@ class RegistrationController extends GetxController {
 
   }
 
-  googleLoginOnPress() async {
+  Future<void> addUser(var email,var googleLoginToken, var password,var googleLoginPhotoURL,var username, var phoneNo) async {
 
-    if (await ConstantsClass.isNetworkConnected()) {
+    var fcmToken = await PreferencesManage.getPreferencesValue(PreferencesManage.fcmToken);
+    String currentDate = DateFormat('dd-MM-yyyy HH:mm:ss').format(DateTime.now());
 
-      isApiCall.value = true;
+    // Call the user's CollectionReference to add a new user
+    return users.add({
+      FirebaseDatabase.userEmail: "$email",
+      FirebaseDatabase.userFcmToken: fcmToken,
+      FirebaseDatabase.userGoogleLoginToken: "$googleLoginToken",
+      FirebaseDatabase.userPassword: "$password",
+      FirebaseDatabase.userUpdateDate: "$currentDate",
+      FirebaseDatabase.userProfileImage: "$googleLoginPhotoURL",
+      FirebaseDatabase.userUsername: "$username",
+      FirebaseDatabase.userPhoneNumber: "$phoneNo",
+      FirebaseDatabase.userCreatedDate: "$currentDate",
+    }).then((value) {
+      // user added successfully.
+      isApiCall.value = false;
+      ConstantsClass.toastMessage("Signup Successfully.");
+      Get.back();
+    },).catchError((error) => failToAddUser(error));
+  }
 
-      // sign out current user...
-      _googleSignIn.signOut();
-
-      // sign in user...
-      GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
-      GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
-      AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
-
-      var authResult = await _auth.signInWithCredential(credential);
-      var userDetails = authResult.user;
-
-      if(userDetails != null){
-
-        var userEmail = userDetails.email;
-        var userDisplayName = userDetails.displayName;
-        var userPhotoUrl = userDetails.photoURL;
-        var userID = userDetails.uid;
-        var userPhone = userDetails.phoneNumber ?? "";
-
-        print("googleLogin userEmail => $userEmail");
-        print("googleLogin userDisplayName => $userDisplayName");
-        print("googleLogin userPhotoUrl => $userPhotoUrl");
-        print("googleLogin userID => $userID");
-        print("googleLogin userPhone => $userPhone");
-
-        isApiCall.value = false;
-
-        ConstantsClass.toastMessage("Login successfully.");
-
-      }else{
-        isApiCall.value = false;
-        ConstantsClass.toastMessage("Please try again.");
-      }
-
-    } else {
-      ConstantsClass.toastMessage("No internet connection try again later...");
+  failToAddUser(var error){
+    isApiCall.value = false;
+    if(error != null && error != ""){
+      print("Failed to add user: $error");
+      ConstantsClass.toastMessage(error);
+    }else{
+      ConstantsClass.toastMessage("Fail to signup user.");
     }
 
   }
@@ -104,7 +101,6 @@ class RegistrationController extends GetxController {
 
     }
   }
-
 
   @override
   void onInit() {
