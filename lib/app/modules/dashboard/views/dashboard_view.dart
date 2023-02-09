@@ -9,6 +9,7 @@ import '../controllers/dashboard_controller.dart';
 
 class DashboardView extends GetWidget<DashboardController> {
   const DashboardView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +44,7 @@ class DashboardView extends GetWidget<DashboardController> {
                 shrinkWrap: true,
                 padding: EdgeInsets.only(top: 16),
                 physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index){
+                itemBuilder: (context, index) {
                   return ConversationList(
                     name: "John",
                     messageText: "Good morning",
@@ -57,7 +58,8 @@ class DashboardView extends GetWidget<DashboardController> {
           ),
 
           Obx(() {
-            return controller.isApiCall.value ? ConstantsClass.apiLoadingWidget() : SizedBox();
+            return controller.isApiCall.value ? ConstantsClass
+                .apiLoadingWidget() : SizedBox();
           })
 
         ],
@@ -67,15 +69,14 @@ class DashboardView extends GetWidget<DashboardController> {
 }
 
 
-
-Widget HomePageHeader(DashboardController controller){
+Widget HomePageHeader(DashboardController controller) {
   return Container(
     //height: 220,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30),
         bottomRight: Radius.circular(30),
       ),
-      color:ColorConstant.colorSkyBlue,
+      color: ColorConstant.colorSkyBlue,
     ),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -98,21 +99,26 @@ Widget HomePageHeader(DashboardController controller){
           elevation: 0,
           backgroundColor: Colors.transparent,
           actions: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(
-                  "https://images.pexels.com/photos/2820884/pexels-photo-2820884.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
-              radius: 18,
-            ),
+            Obx(() {
+              return Container(
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(
+                      "${controller.loginUserProfile.value}"),
+                  radius: 18,
+                ),
+              );
+            }),
             SizedBox(width: 10,)
           ],
         ),
         SizedBox(height: 10,),
 
         Obx(() {
-          return controller.listAllUsers != null && controller.listAllUsers.length > 5
+          return controller.listAllUsers != null &&
+              controller.listAllUsers.length > 5
               ?
           Padding(
-            padding: const EdgeInsets.only(right: 10.0,bottom: 5),
+            padding: const EdgeInsets.only(right: 10.0, bottom: 5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -133,10 +139,11 @@ Widget HomePageHeader(DashboardController controller){
         }),
 
         Obx(() {
-          return controller.listAllUsers != null && controller.listAllUsers.length > 0
+          return controller.listAllUsers != null &&
+              controller.listAllUsers.length > 0
               ?
           Padding(
-            padding: const EdgeInsets.only(bottom: 18.0, right: 10, left: 10, ),
+            padding: const EdgeInsets.only(bottom: 18.0, right: 10, left: 10,),
             child: Container(
               height: 90,
               width: double.infinity,
@@ -144,7 +151,7 @@ Widget HomePageHeader(DashboardController controller){
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 itemCount: controller.listAllUsers.length,
-                itemBuilder: (BuildContext ctx, int index){
+                itemBuilder: (BuildContext ctx, int index) {
                   return Row(
 
                     children: [
@@ -157,16 +164,22 @@ Widget HomePageHeader(DashboardController controller){
                             height: 55,
                             width: 55,
                             decoration: BoxDecoration(
-                              border: Border.all(width: 2,color: ColorConstant.colorWhite),
-                              borderRadius: const BorderRadius.all(Radius.circular(30.0)),
+                              border: Border.all(
+                                  width: 2, color: ColorConstant.colorWhite),
+                              borderRadius: const BorderRadius.all(
+                                  Radius.circular(30.0)),
                             ),
                             child: CircleAvatar(
-                              backgroundImage: NetworkImage(controller.listAllUsers[index].userProfileImage),
+                              backgroundImage: NetworkImage(
+                                  controller.listAllUsers[index]
+                                      .userProfileImage),
                               radius: 10,
                             ),
                           ),
                           Text(
-                            controller.listAllUsers[index].username.toString().replaceAll(" ", "\n").toTitleCase(),
+                            controller.listAllUsers[index].username.toString()
+                                .replaceAll(" ", "\n")
+                                .toTitleCase(),
                             overflow: TextOverflow.fade,
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -194,17 +207,25 @@ Widget HomePageHeader(DashboardController controller){
   );
 }
 extension StringCasingExtension on String {
-  String toCapitalized() => length > 0 ?'${this[0].toUpperCase()}${substring(1).toLowerCase()}':'';
-  String toTitleCase() => replaceAll(RegExp(' +'), ' ').split(' ').map((str) => str.toCapitalized()).join(' ');
+  String toCapitalized() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+
+  String toTitleCase() =>
+      replaceAll(RegExp(' +'), ' ').split(' ')
+          .map((str) => str.toCapitalized())
+          .join(' ');
 }
 
-class ConversationList extends StatefulWidget{
+class ConversationList extends StatefulWidget {
   String name;
   String messageText;
   String imageUrl;
   String time;
   bool isMessageRead;
-  ConversationList({required this.name,required this.messageText,required this.imageUrl,required this.time,required this.isMessageRead});
+
+  ConversationList(
+      {required this.name, required this.messageText, required this.imageUrl, required this.time, required this.isMessageRead});
+
   @override
   _ConversationListState createState() => _ConversationListState();
 }
@@ -213,24 +234,23 @@ class _ConversationListState extends State<ConversationList> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
-      },
+      onTap: () {},
       child: Container(
-        padding: EdgeInsets.only(left: 16,right: 16,top: 10,bottom: 10),
+        padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
         child: Row(
           children: <Widget>[
             Expanded(
               child: Row(
                 children: <Widget>[
-                 Container(
-                   height: 50,
-                   width: 50,
-                       decoration: BoxDecoration(
-                         borderRadius: BorderRadius.all(Radius.circular(10)),
-                         color: ColorConstant.colorSkyBlue
-                       ),
-                       // "https://images.pexels.com/photos/2820884/pexels-photo-2820884.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                 ),
+                  Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        color: ColorConstant.colorSkyBlue
+                    ),
+                    // "https://images.pexels.com/photos/2820884/pexels-photo-2820884.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+                  ),
                   SizedBox(width: 16,),
                   Expanded(
                     child: Container(
@@ -240,7 +260,12 @@ class _ConversationListState extends State<ConversationList> {
                         children: [
                           Text(widget.name, style: TextStyle(fontSize: 16),),
                           SizedBox(height: 6,),
-                          Text(widget.messageText,style: TextStyle(fontSize: 13,color: Colors.grey.shade600, fontWeight: widget.isMessageRead?FontWeight.bold:FontWeight.normal),),
+                          Text(widget.messageText, style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey.shade600,
+                              fontWeight: widget.isMessageRead
+                                  ? FontWeight.bold
+                                  : FontWeight.normal),),
                         ],
                       ),
                     ),
@@ -248,7 +273,8 @@ class _ConversationListState extends State<ConversationList> {
                 ],
               ),
             ),
-            Text(widget.time,style: TextStyle(fontSize: 12,color: ColorConstant.colorGrey),),
+            Text(widget.time,
+              style: TextStyle(fontSize: 12, color: ColorConstant.colorGrey),),
           ],
         ),
       ),

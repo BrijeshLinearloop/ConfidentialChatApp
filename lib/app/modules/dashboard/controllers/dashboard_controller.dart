@@ -4,10 +4,12 @@ import 'package:get/get.dart';
 
 import '../../../../utils/constants_class.dart';
 import '../../../../utils/firebase_database.dart';
+import '../../../../utils/preferences_manage.dart';
 
 class DashboardController extends GetxController {
 
   var isApiCall = false.obs;
+  var loginUserProfile = "".obs;
   RxList<dynamic> listAllUsers = [].obs;
 
   @override
@@ -28,15 +30,21 @@ class DashboardController extends GetxController {
 
   getAllUserList() async {
 
+    loginUserProfile.value = await PreferencesManage.getPreferencesValue(PreferencesManage.loginUserProfileImage);
+
     isApiCall.value = true;
 
     if (await ConstantsClass.isNetworkConnected()) {
 
+      var loginUserDocumentId = await PreferencesManage.getPreferencesValue(PreferencesManage.loginUserDocumentId);
+
       CollectionReference users = FirebaseFirestore.instance.collection(FirebaseDatabase.tblUser);
 
       await users.get().then((allUsers) {
+
         print("getAllUserList => ${allUsers.size}");
 
+        // for display max 5 user in dashboard screen..
         var displayUser = 5;
         if(allUsers.size < 5){
           displayUser = allUsers.size;
@@ -51,8 +59,10 @@ class DashboardController extends GetxController {
           var userProfileImage = allUsers.docs[i][FirebaseDatabase.userProfileImage];
           var userPhoneNumber = allUsers.docs[i][FirebaseDatabase.userPhoneNumber];
 
-          listAllUsers.add(beanUserList(username: username,userEmail: userEmail, userGoogleLoginToken: userGoogleLoginToken,
-              userProfileImage: userProfileImage, userPhoneNumber: userPhoneNumber, userDocsId: userDocsId));
+          if(loginUserDocumentId != userDocsId){
+            listAllUsers.add(beanUserList(username: username,userEmail: userEmail, userGoogleLoginToken: userGoogleLoginToken,
+                userProfileImage: userProfileImage, userPhoneNumber: userPhoneNumber, userDocsId: userDocsId));
+          }
 
         }
 
