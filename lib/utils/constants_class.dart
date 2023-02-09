@@ -1,13 +1,14 @@
 
 import 'package:confidential_chat_app/utils/color_constant.dart';
 import 'package:confidential_chat_app/utils/math_utils.dart';
+import 'package:confidential_chat_app/utils/preferences_manage.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'network/network_info.dart';
 
 class ConstantsClass{
 
@@ -17,10 +18,10 @@ class ConstantsClass{
     Fluttertoast.showToast(
         msg: "$message",
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: ColorConstant.colorWhite,
-        textColor: ColorConstant.colorBalck,
+        backgroundColor: ColorConstant.colorBlackTransparent,
+        textColor: ColorConstant.colorWhite,
         fontSize: 16.0
     );
   }
@@ -66,10 +67,27 @@ class ConstantsClass{
   }
 
   static Future<bool> isNetworkConnected() async {
-    if (!await Get.find<NetworkInfo>().isConnected()) {
-      return false;
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile) {
+      return true;// connected to a mobile network.
+    } else if (connectivityResult == ConnectivityResult.wifi) {
+      return true;// connected to a wifi network.
     }else{
-      return true;
+      return false;
     }
   }
+
+  // get Firebase notification token.
+  static void fcmTokenRefresh(){
+
+    FirebaseMessaging.instance.getToken().then((value) {
+
+      print("fcmToken => ${value.toString()}");
+
+      PreferencesManage.setPreferencesValue(PreferencesManage.fcmToken,value.toString());
+
+    },);
+
+  }
+
 }
