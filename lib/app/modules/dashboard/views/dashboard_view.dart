@@ -82,7 +82,6 @@ Widget HomePageHeader(DashboardController controller) {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         AppBar(
-          leading: Icon(Icons.line_weight),
           centerTitle: true,
           title: Text(
             "MESSAGES",
