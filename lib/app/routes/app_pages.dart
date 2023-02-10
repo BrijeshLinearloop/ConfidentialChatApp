@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/chatRoom/bindings/chat_room_binding.dart';
+import '../modules/chatRoom/views/chat_room_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/home/bindings/home_binding.dart';
@@ -8,6 +10,8 @@ import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/loginUserList/bindings/login_user_list_binding.dart';
 import '../modules/loginUserList/views/login_user_list_view.dart';
+import '../modules/profile/bindings/profile_binding.dart';
+import '../modules/profile/views/profile_view.dart';
 import '../modules/registration/bindings/registration_binding.dart';
 import '../modules/registration/views/registration_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
@@ -50,6 +54,16 @@ class AppPages {
       name: _Paths.LOGIN_USER_LIST,
       page: () => const LoginUserListView(),
       binding: LoginUserListBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHAT_ROOM,
+      page: () => const ChatRoomView(),
+      binding: ChatRoomBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE,
+      page: () => const ProfileView(),
+      binding: ProfileBinding(),
     ),
   ];
 }

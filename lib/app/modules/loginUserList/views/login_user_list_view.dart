@@ -18,82 +18,108 @@ class LoginUserListView extends GetView<LoginUserListController> {
         centerTitle: true,
         elevation: 0,
         backgroundColor: ColorConstant.colorSkyBlue,
-        actions:  [
-          // InkWell(
-          //     onTap: (){
-          //
-          //     },
-          //     child: Icon(Icons.search)),
-          // SizedBox(width: 10,)
-        ],
       ),
-     
+
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(children: [
+        child: Stack(
+          children: [
 
-     // Obx(()=>
-
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: SizedBox(
-                height: 45,
-                child: TextField(
-                  decoration:InputDecoration(
-                    hintText: "Search...",
-                    border: OutlineInputBorder()
+            SingleChildScrollView(
+              child: Column(children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SizedBox(
+                    //height: 45,
+                    child: TextField(
+                      decoration:InputDecoration(
+                        contentPadding: EdgeInsets.only(right: 10,left: 10,top: 5,bottom: 5),
+                        hintText: "Search...",
+                        border: OutlineInputBorder()
+                      ),
+                      onChanged: (value) {
+                        if(value != null){
+                          controller.searchUser(value.toString().trim());
+                        }
+                      },
+                    ),
                   ),
                 ),
-              ),
+
+                Obx(() {
+                  return controller.listAllUsers.length > 0
+                      ?
+                  ListView.builder(
+                      shrinkWrap:  true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: controller.listAllUsers.length,
+                      itemBuilder: (BuildContext context, int index){
+                        return  Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Row(children: [
+                            Stack(
+                              children: [
+                                CircleAvatar(
+                                  radius: 18,
+                                  backgroundColor: Colors.lightBlue,
+                                  backgroundImage: NetworkImage(controller.listAllUsers[index].userProfileImage),
+                                ),
+
+                              ],
+                            ),
+
+                            SizedBox(width: 15,),
+                            Text(controller.listAllUsers[index].username.toString().toTitleCase(),
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: ColorConstant.colorBalck,
+                                fontSize: getFontSize(18),
+                                fontFamily: ConstantsClass.fontFamily,
+                              ),
+                            )
+                          ],),
+                        );
+                      }):SizedBox();
+                })
+
+              ],),
             ),
 
-            ListView.builder(
-              shrinkWrap:  true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount:  10,
-                itemBuilder: (BuildContext context, int index){
-              return  Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Row(children: [
-                  Stack(
-                   children: [
-                     CircleAvatar(
-                       radius: 18,
-                       backgroundColor: Colors.lightBlue,
-
-                     ),
-
-                     // Positioned(
-                     //   bottom: 0,
-                     //   right: 5,
-                     //   child: CircleAvatar(
-                     //     radius: 5,
-                     //     backgroundColor: Colors.white,
-                     //     child: CircleAvatar(radius: 4,
-                     //     backgroundColor: Colors.green,
-                     //     ),
-                     //   ),
-                     // )
-                   ],
-                  ),
-
-                  SizedBox(width: 15,),
-                  Text("Peter England",
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.left,
+            Obx(() {
+              return controller.listAllUsers.isEmpty && !controller.isApiCall.value
+                  ?
+              Center(
+                  child: Text("User not found.",
                     style: TextStyle(
-                      color: ColorConstant.colorBalck,
-                      fontSize: getFontSize(22),
                       fontFamily: ConstantsClass.fontFamily,
+                      color: ColorConstant.colorGrey,
+                      fontSize: getFontSize(16),
+                      fontWeight: FontWeight.normal,
                     ),
                   )
-                ],),
-              );
-            })
+              )
+                  :
+              SizedBox();
 
-          ],),
+            }),
+
+            Obx(() {
+              return controller.isApiCall.value ? ConstantsClass
+                  .apiLoadingWidget() : SizedBox();
+            }),
+
+          ],
         ),
       )
     );
   }
+}
+extension StringCasingExtension on String {
+  String toCapitalized() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+
+  String toTitleCase() =>
+      replaceAll(RegExp(' +'), ' ').split(' ')
+          .map((str) => str.toCapitalized())
+          .join(' ');
 }

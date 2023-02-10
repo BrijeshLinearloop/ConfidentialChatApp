@@ -12,7 +12,7 @@ class ColorConstant{
   static Color colorBlue = Colors.blue;
   static Color colorSkyBlue = Color(0xff0a99e5);
 
-  static Color colorPrimary = Color(0xFFFDB11A);
+  static Color colorPrimary = Color(0xff0a99e5);//Color(0xFFFDB11A)
   static Color colorBlackTransparent = Color(0x50000000);
 
 }

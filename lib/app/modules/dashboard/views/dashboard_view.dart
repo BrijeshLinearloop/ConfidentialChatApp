@@ -1,3 +1,4 @@
+import 'package:confidential_chat_app/app/routes/app_pages.dart';
 import 'package:confidential_chat_app/utils/color_constant.dart';
 import 'package:confidential_chat_app/utils/constants_class.dart';
 import 'package:confidential_chat_app/utils/math_utils.dart';
@@ -13,56 +14,59 @@ class DashboardView extends GetWidget<DashboardController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Column(
-            children: [
+      body: SafeArea(
+        child: Stack(
+          children: [
 
-              HomePageHeader(controller),
+            Column(
+              children: [
 
-              SizedBox(height: 20,),
+                HomePageHeader(controller),
 
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15.0),
-                    child: Text("Recent",
-                      overflow: TextOverflow.fade,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        color: ColorConstant.colorBalck,
-                        fontSize: getFontSize(18),
-                        fontWeight: FontWeight.bold,
+                SizedBox(height: 20,),
+
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15.0),
+                      child: Text("Recent",
+                        overflow: TextOverflow.fade,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          color: ColorConstant.colorBalck,
+                          fontSize: getFontSize(18),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
 
-              ListView.builder(
-                itemCount: 4,
-                shrinkWrap: true,
-                padding: EdgeInsets.only(top: 16),
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return ConversationList(
-                    name: "John",
-                    messageText: "Good morning",
-                    imageUrl: "",
-                    time: "today",
-                    isMessageRead: true,
-                  );
-                },
-              ),
-            ],
-          ),
+                ListView.builder(
+                  itemCount: 4,
+                  shrinkWrap: true,
+                  padding: EdgeInsets.only(top: 16),
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return ConversationList(
+                      name: "John",
+                      messageText: "Good morning",
+                      imageUrl: "",
+                      time: "today",
+                      isMessageRead: true,
+                    );
+                  },
+                ),
+              ],
+            ),
 
-          Obx(() {
-            return controller.isApiCall.value ? ConstantsClass
-                .apiLoadingWidget() : SizedBox();
-          })
+            Obx(() {
+              return controller.isApiCall.value ? ConstantsClass
+                  .apiLoadingWidget() : SizedBox();
+            })
 
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -81,56 +85,77 @@ Widget HomePageHeader(DashboardController controller) {
     child: Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        AppBar(
-          centerTitle: true,
-          title: Text(
-            "MESSAGES",
-            overflow: TextOverflow.fade,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              letterSpacing: 1.5,
-              fontFamily: ConstantsClass.fontFamily,
-              color: ColorConstant.colorWhite,
-              fontSize: getFontSize(16),
-              // fontWeight: FontWeight.bold,
-            ),
-          ),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          actions: [
-            Obx(() {
-              return Container(
-                child: CircleAvatar(
-                  backgroundImage: NetworkImage(
-                      "${controller.loginUserProfile.value}"),
-                  radius: 18,
+
+        Container(
+          padding: const EdgeInsets.only(right: 15,left: 15,top: 10,bottom: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(width: 30,height: 30,),
+
+              Text(
+                "Confidential chat",
+                overflow: TextOverflow.fade,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  letterSpacing: 1.2,
+                  fontFamily: ConstantsClass.fontFamily,
+                  color: ColorConstant.colorWhite,
+                  fontWeight: FontWeight.bold,
+                  fontSize: getFontSize(18),
+                  // fontWeight: FontWeight.bold,
                 ),
-              );
-            }),
-            SizedBox(width: 10,)
-          ],
+              ),
+
+              Obx(() {
+                return Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        width: 2, color: ColorConstant.colorWhite),
+                    borderRadius: const BorderRadius.all(
+                        Radius.circular(30.0)),
+                  ),
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(
+                        "${controller.loginUserProfile.value}"),
+                    radius: 18,
+                  ),
+                );
+              }),
+
+            ],
+          ),
         ),
+
+
         SizedBox(height: 10,),
 
         Obx(() {
           return controller.listAllUsers != null &&
-              controller.listAllUsers.length > 5
+              controller.listAllUsers.length > 1
               ?
-          Padding(
-            padding: const EdgeInsets.only(right: 10.0, bottom: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text("view more",
-                  overflow: TextOverflow.fade,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: ColorConstant.colorWhite,
-                    fontSize: getFontSize(14),
-                    // fontWeight: FontWeight.bold,
-                  ),
-                )
-              ],
+          InkWell(
+            onTap: () {
+              Get.toNamed(Routes.LOGIN_USER_LIST);
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 15.0, bottom: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text("View more",
+                    overflow: TextOverflow.fade,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: ColorConstant.colorWhite,
+                      fontSize: getFontSize(14),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )
+                ],
+              ),
             ),
           )
               :
@@ -151,45 +176,52 @@ Widget HomePageHeader(DashboardController controller) {
                 scrollDirection: Axis.horizontal,
                 itemCount: controller.listAllUsers.length,
                 itemBuilder: (BuildContext ctx, int index) {
-                  return Row(
+                  return Container(
+                    constraints: BoxConstraints(
+                        maxWidth: 90
+                    ),
+                    child: Row(
 
-                    children: [
+                      children: [
 
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: 55,
-                            width: 55,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 2, color: ColorConstant.colorWhite),
-                              borderRadius: const BorderRadius.all(
-                                  Radius.circular(30.0)),
-                            ),
-                            child: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  controller.listAllUsers[index]
-                                      .userProfileImage),
-                              radius: 10,
-                            ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 55,
+                                width: 55,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 2, color: ColorConstant.colorWhite),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(30.0)),
+                                ),
+                                child: CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                      controller.listAllUsers[index]
+                                          .userProfileImage),
+                                  radius: 10,
+                                ),
+                              ),
+                              Text(
+                                controller.listAllUsers[index].username.toString().replaceAll(" ", "\n")
+                                    .toTitleCase(),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: ColorConstant.colorWhite,
+                                  fontSize: getFontSize(12),
+                                ),
+                              )
+                            ],
                           ),
-                          Text(
-                            controller.listAllUsers[index].username.toString()
-                                .replaceAll(" ", "\n")
-                                .toTitleCase(),
-                            overflow: TextOverflow.fade,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: ColorConstant.colorWhite,
-                              fontSize: getFontSize(14),
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(width: 15,)
-                    ],
+                        ),
+                        const SizedBox(width: 15,)
+                      ],
+                    ),
                   );
                 },
 
