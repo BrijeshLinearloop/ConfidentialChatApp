@@ -46,65 +46,51 @@ class LoginController extends GetxController {
       _googleSignIn.signOut();
 
       // sign in user...
-      GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
-      GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
-      AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
+      GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn().catchError((error) => failError(error));
 
-      var authResult = await _auth.signInWithCredential(credential);
-      var userDetails = authResult.user;
-
-      if(userDetails != null){
-
-        var userEmail = userDetails.email ?? "";
-        var userDisplayName = userDetails.displayName ?? "";
-        var userPhotoUrl = userDetails.photoURL ?? "";
-        var userID = userDetails.uid ?? "";
-        var userPhone = userDetails.phoneNumber ?? "";
-
-        print("googleLogin userEmail => $userEmail");
-        print("googleLogin userDisplayName => $userDisplayName");
-        print("googleLogin userPhotoUrl => $userPhotoUrl");
-        print("googleLogin userID => $userID");
-        print("googleLogin userPhone => $userPhone");
-
-        isGoogleUserExist(userEmail,userDisplayName,userPhotoUrl,userID,userPhone);
-
-      }else{
+      if(googleSignInAccount == null){
         isApiCall.value = false;
-        ConstantsClass.toastMessage("Please try again.");
+      }else{
+
+        GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
+        AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+
+        var authResult = await _auth.signInWithCredential(credential).catchError((error) => failError(error));
+        var userDetails = authResult.user;
+
+        if(userDetails != null){
+
+          var userEmail = userDetails.email ?? "";
+          var userDisplayName = userDetails.displayName ?? "";
+          var userPhotoUrl = userDetails.photoURL ?? "";
+          var userID = userDetails.uid ?? "";
+          var userPhone = userDetails.phoneNumber ?? "";
+
+          print("googleLogin userEmail => $userEmail");
+          print("googleLogin userDisplayName => $userDisplayName");
+          print("googleLogin userPhotoUrl => $userPhotoUrl");
+          print("googleLogin userID => $userID");
+          print("googleLogin userPhone => $userPhone");
+
+          isGoogleUserExist(userEmail,userDisplayName,userPhotoUrl,userID,userPhone);
+
+        }else{
+          isApiCall.value = false;
+          ConstantsClass.toastMessage("Please try again.");
+        }
+
       }
 
     } else {
       ConstantsClass.toastMessage("No internet connection try again later...");
     }
 
-
+    isApiCall.value = false;
 
   }
-
-  // Future<void> emailLogin()async{
-  //   try {
-  //     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-  //         email: "beeerry.allen@example.com",
-  //         password: "SuperSecretPassword!"
-  //     );
-  //     print("add user");
-  //     addUser();
-  //     print("user added");
-  //
-  //   } on FirebaseAuthException catch (e) {
-  //     if (e.code == 'weak-password') {
-  //       print('The password provided is too weak.');
-  //     } else if (e.code == 'email-already-in-use') {
-  //       print('The account already exists for that email.');
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
 
   Future<void> isAuthUserExist(var email, var password) async {
     try {
@@ -246,6 +232,10 @@ class LoginController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  failError(error) {
+    isApiCall.value = false;
   }
 
 }

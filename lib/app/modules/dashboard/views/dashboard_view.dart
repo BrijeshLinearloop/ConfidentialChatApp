@@ -108,19 +108,25 @@ Widget HomePageHeader(DashboardController controller) {
               ),
 
               Obx(() {
-                return Container(
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        width: 2, color: ColorConstant.colorWhite),
-                    borderRadius: const BorderRadius.all(
-                        Radius.circular(30.0)),
-                  ),
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        "${controller.loginUserProfile.value}"),
-                    radius: 18,
+                return InkWell(
+                  onTap: () {
+                    Get.toNamed(Routes.PROFILE);
+                  },
+                  child: Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 2, color: ColorConstant.colorWhite),
+                      borderRadius: const BorderRadius.all(Radius.circular(30.0)),
+                    ),
+                    child: Hero(
+                      tag: 'profile',
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            "${controller.loginUserProfile.value}"),
+                        radius: 18,
+                      ),
+                    ),
                   ),
                 );
               }),
