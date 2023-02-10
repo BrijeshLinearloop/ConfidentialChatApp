@@ -44,62 +44,62 @@ class ChatRoomView extends GetView<ChatRoomController> {
 
       body: SafeArea(
 
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-             Container(
-               decoration: BoxDecoration(
-                   color: ColorConstant.colorSkyBlue,
-                   borderRadius: BorderRadius.only(bottomRight: Radius.circular(20),bottomLeft: Radius.circular(20))
-               ),
-               child: Padding(
-                 padding: const EdgeInsets.only(left: 8.0,right: 8.0, bottom: 15.0,top: 10),
-                 child: Row(
-                   children: [
-                     Icon(Icons.arrow_back_ios_new_outlined,color: ColorConstant.colorWhite,size: 18,),
-                     Container(
-                       height: 30,
-                       width: 30,
-                       color: ColorConstant.colorSkyBlue,
-                     ),
-                     Column(
-                       mainAxisAlignment: MainAxisAlignment.start,
-                       crossAxisAlignment: CrossAxisAlignment.start,
-                       children: [
-                         Text("John Peter",
-                           style: TextStyle(
-                             letterSpacing: 1.2,
-                             fontFamily: ConstantsClass.fontFamily,
-                             color: ColorConstant.colorWhite,
-                             fontWeight: FontWeight.bold,
-                             fontSize: getFontSize(22),
-                             // fontWeight: FontWeight.bold,
-                           ),
+        child: Column(
+          children: [
+           Container(
+             decoration: BoxDecoration(
+                 color: ColorConstant.colorSkyBlue,
+                 borderRadius: BorderRadius.only(bottomRight: Radius.circular(20),bottomLeft: Radius.circular(20))
+             ),
+             child: Padding(
+               padding: const EdgeInsets.only(left: 8.0,right: 8.0, bottom: 15.0,top: 10),
+               child: Row(
+                 children: [
+                   Icon(Icons.arrow_back_ios_new_outlined,color: ColorConstant.colorWhite,size: 18,),
+                   Container(
+                     height: 30,
+                     width: 30,
+                     color: ColorConstant.colorSkyBlue,
+                   ),
+                   Column(
+                     mainAxisAlignment: MainAxisAlignment.start,
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       Text("John Peter",
+                         style: TextStyle(
+                           letterSpacing: 1.2,
+                           fontFamily: ConstantsClass.fontFamily,
+                           color: ColorConstant.colorWhite,
+                           fontWeight: FontWeight.bold,
+                           fontSize: getFontSize(22),
+                           // fontWeight: FontWeight.bold,
                          ),
-                         Text("online",
-                           style: TextStyle(
-                             letterSpacing: 1.2,
-                             fontFamily: ConstantsClass.fontFamily,
-                             color: ColorConstant.colorWhite,
-                             fontSize: getFontSize(18),
-                             // fontWeight: FontWeight.bold,
-                           ),
-                         )
-                       ],
-                     ),
-                     Spacer(),
-                     Icon(Icons.more_vert,color: ColorConstant.colorWhite,size: 16,)
-                   ],
-                 ),
+                       ),
+                       Text("online",
+                         style: TextStyle(
+                           letterSpacing: 1.2,
+                           fontFamily: ConstantsClass.fontFamily,
+                           color: ColorConstant.colorWhite,
+                           fontSize: getFontSize(18),
+                           // fontWeight: FontWeight.bold,
+                         ),
+                       )
+                     ],
+                   ),
+                   Spacer(),
+                   Icon(Icons.more_vert,color: ColorConstant.colorWhite,size: 16,)
+                 ],
                ),
              ),
+           ),
 
 
-              ListView.builder(
+            Expanded(
+              child: ListView.builder(
                 itemCount: messages.length,
                 shrinkWrap: true,
                 padding: EdgeInsets.only(top: 10,bottom: 10),
-                physics: NeverScrollableScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index){
                   return Container(
                     padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
@@ -117,8 +117,8 @@ class ChatRoomView extends GetView<ChatRoomController> {
                   );
                 },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
